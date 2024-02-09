@@ -1,0 +1,4 @@
+How to run this project - 
+
+1. Pass the input file as the first argument in the command
+2. listing.txt and loading.txt will be the two outputs of the assembler.
