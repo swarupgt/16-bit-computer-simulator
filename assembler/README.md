@@ -1,6 +1,7 @@
 # CSCI 6461 Computer Architecture Team Project
+# Team 5
 
-- Team 5 (Swarup Totloor, Yashita Pobbareddy, Ravi Gavade)
+- Project by Swarup Totloor, Yashita Pobbareddy, Ravi Gavade
 
 ## Part 0 (Assembler)
 

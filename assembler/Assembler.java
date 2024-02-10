@@ -185,24 +185,13 @@ public class Assembler {
         }
         return s;
     }
-    
-    // Convert a Binary string to Octal
-    public static String BinaryToOctal(String num) {
-        int n = Integer.parseInt(num, 2);
-        return Integer.toOctalString(n);
-    }
 
-    // MAIN
-    public static void main(String[] args) {
-
-        // Instantiate an Assembler object with input file
-        Assembler a = new Assembler(args[0]);
-
+    public void Do() {
         // Initialise Program Counter to 0
         int ProgramCounter = 0;
 
         // Loop through instructions
-        for (String[] inst : a.InputInstructions) {
+        for (String[] inst : InputInstructions) {
 
             String column2 = "";
 
@@ -210,7 +199,7 @@ public class Assembler {
 
                 // Output only needs to go to the listing file
                 ProgramCounter = Integer.parseInt(inst[1]);
-                a.AddToListingFileContent("      "+ "\t"+"      ", inst);
+                AddToListingFileContent("      "+ "\t"+"      ", inst);
                 continue;
             } else if (inst[0].equals("Data")) {
 
@@ -226,7 +215,7 @@ public class Assembler {
                 column2 = "0";
             } else {
                 // Process given instruction
-                column2 = a.ProcessInstruction(inst);
+                column2 = ProcessInstruction(inst);
                 // System.out.println(inst[0]+" "+inst[1] + "\t COLUMN 2: " + column2);
             }
 
@@ -235,15 +224,21 @@ public class Assembler {
             String instOctalString = FormatNumberString(Integer.toOctalString(Integer.parseInt(column2, 2)), 6);
 
             // write to loading and listing files
-            a.AddToLoadingFileContent(PCOctalString+ "\t"+instOctalString);
-            a.AddToListingFileContent(PCOctalString+ "\t"+instOctalString, inst);
+            AddToLoadingFileContent(PCOctalString+ "\t"+instOctalString);
+            AddToListingFileContent(PCOctalString+ "\t"+instOctalString, inst);
             System.out.println(PCOctalString+ "\t"+instOctalString);
-            
 
             // update PC
             ProgramCounter++;
         }
+    }
+    
+    // MAIN
+    public static void main(String[] args) {
 
+        // Instantiate an Assembler object with input file
+        Assembler a = new Assembler(args[0]);
+        a.Do();
         a.CreateListingAndLoadingFiles();
         System.out.println("All done.");
 
