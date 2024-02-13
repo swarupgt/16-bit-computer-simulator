@@ -77,7 +77,7 @@ public class Assembler {
                 R = Integer.toBinaryString(Integer.parseInt(Fields[0]));
                 IX = Integer.toBinaryString(Integer.parseInt(Fields[1]));
                 Address = Integer.toBinaryString(Integer.parseInt(Fields[2]));
-                if (Fields.length == 4) {
+                if (Fields.length == 4 && Fields[3].equals("1")) {
                     I = "1";
                 } else {
                     I = "0";
@@ -98,7 +98,7 @@ public class Assembler {
                 R = "00";
                 IX = Integer.toBinaryString(Integer.parseInt(Fields[0]));
                 Address = Integer.toBinaryString(Integer.parseInt(Fields[1]));
-                if (Fields.length == 3) {
+                if (Fields.length == 3 && Fields[2].equals("1")) {
                     I = "1";
                 }
                 // System.out.println(OpCodeBinary+ " "+ R + " "+IX + " " + I + " "+ Address+"---X");
