@@ -8,32 +8,32 @@
 
 <AnchorPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="846.0" prefWidth="1223.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.Controller">
    <children>
-      <TextField fx:id="GPR0_text" layoutX="152.0" layoutY="100.0" prefHeight="26.0" prefWidth="202.0" />
+      <TextField fx:id="GPR0_text" editable="false" layoutX="152.0" layoutY="100.0" prefHeight="26.0" prefWidth="202.0" />
       <Text layoutX="433.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Team 5 CSCI 6461 Simulator" wrappingWidth="356.43359375">
          <font>
             <Font name="System Bold" size="22.0" />
          </font>
       </Text>
-      <Button fx:id="GPR0_btn" layoutX="371.0" layoutY="100.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="GPR1_text" layoutX="152.0" layoutY="142.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="GPR1_btn" layoutX="371.0" layoutY="142.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="GPR2_text" layoutX="152.0" layoutY="181.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="GPR2_btn" layoutX="371.0" layoutY="181.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="GPR3_text" layoutX="152.0" layoutY="220.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="GPR3_btn" layoutX="371.0" layoutY="220.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="IXR1_text" layoutX="152.0" layoutY="257.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="IXR1_btn" layoutX="371.0" layoutY="257.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="IXR2_text" layoutX="152.0" layoutY="296.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="IXR2_btn" layoutX="371.0" layoutY="296.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="IXR3_text" layoutX="152.0" layoutY="339.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="IXR3_btn" layoutX="371.0" layoutY="339.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="PC_text" layoutX="789.0" layoutY="108.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="PC_btn" layoutX="1008.0" layoutY="108.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="MAR_text" layoutX="789.0" layoutY="150.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="MAR_btn" layoutX="1008.0" layoutY="150.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="MBR_text" layoutX="789.0" layoutY="189.0" prefHeight="26.0" prefWidth="202.0" />
-      <Button fx:id="MBR_btn" layoutX="1008.0" layoutY="189.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
-      <TextField fx:id="IR_text" layoutX="789.0" layoutY="228.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="GPR0_btn" layoutX="371.0" layoutY="100.0" mnemonicParsing="false" onAction="#PutBinaryGPR0" text="-" />
+      <TextField fx:id="GPR1_text" editable="false" layoutX="152.0" layoutY="142.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="GPR1_btn" layoutX="371.0" layoutY="142.0" mnemonicParsing="false" onAction="#PutBinaryGPR1" text="-" />
+      <TextField fx:id="GPR2_text" editable="false" layoutX="152.0" layoutY="181.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="GPR2_btn" layoutX="371.0" layoutY="181.0" mnemonicParsing="false" onAction="#PutBinaryGPR2" text="-" />
+      <TextField fx:id="GPR3_text" editable="false" layoutX="152.0" layoutY="220.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="GPR3_btn" layoutX="371.0" layoutY="220.0" mnemonicParsing="false" onAction="#PutBinaryGPR3" text="-" />
+      <TextField fx:id="IXR1_text" editable="false" layoutX="152.0" layoutY="257.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="IXR1_btn" layoutX="371.0" layoutY="257.0" mnemonicParsing="false" onAction="#PutBinaryIXR1" text="-" />
+      <TextField fx:id="IXR2_text" editable="false" layoutX="152.0" layoutY="296.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="IXR2_btn" layoutX="371.0" layoutY="296.0" mnemonicParsing="false" onAction="#PutBinaryIXR2" text="-" />
+      <TextField fx:id="IXR3_text" editable="false" layoutX="152.0" layoutY="339.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="IXR3_btn" layoutX="371.0" layoutY="339.0" mnemonicParsing="false" onAction="#PutBinaryIXR3" text="-" />
+      <TextField fx:id="PC_text" editable="false" layoutX="789.0" layoutY="108.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="PC_btn" layoutX="1008.0" layoutY="108.0" mnemonicParsing="false" onAction="#PutBinaryPC" text="-" />
+      <TextField fx:id="MAR_text" editable="false" layoutX="789.0" layoutY="150.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="MAR_btn" layoutX="1008.0" layoutY="150.0" mnemonicParsing="false" onAction="#PutBinaryMAR" text="-" />
+      <TextField fx:id="MBR_text" editable="false" layoutX="789.0" layoutY="189.0" prefHeight="26.0" prefWidth="202.0" />
+      <Button fx:id="MBR_btn" layoutX="1008.0" layoutY="189.0" mnemonicParsing="false" onAction="#PutBinaryMBR" text="-" />
+      <TextField fx:id="IR_text" editable="false" layoutX="789.0" layoutY="228.0" prefHeight="26.0" prefWidth="202.0" />
       <Text layoutX="98.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="GPR 0" />
       <Text layoutX="98.0" layoutY="160.0" strokeType="OUTSIDE" strokeWidth="0.0" text="GPR 1" />
       <Text layoutX="98.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="GPR 2" />
@@ -53,13 +53,13 @@
       <Button fx:id="IPL_btn" layoutX="972.0" layoutY="400.0" mnemonicParsing="false" onAction="#OnIPLButtonClick" text="IPL" />
       <TextField fx:id="InputFile_text" layoutX="648.0" layoutY="478.0" prefHeight="26.0" prefWidth="490.0" />
       <TextField fx:id="Binary_text" layoutX="77.0" layoutY="417.0" prefHeight="26.0" prefWidth="394.0" />
-      <TextField fx:id="Octal_text" layoutX="77.0" layoutY="478.0" prefHeight="26.0" prefWidth="394.0" />
+      <TextField fx:id="Octal_text" layoutX="77.0" layoutY="478.0" onAction="#SetBinaryTextValue" prefHeight="26.0" prefWidth="394.0" />
       <Text layoutX="77.0" layoutY="404.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Binary" />
       <Text layoutX="77.0" layoutY="468.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Octal" />
-      <TextField fx:id="CC_text" layoutX="789.0" layoutY="304.0" prefHeight="26.0" prefWidth="202.0" />
+      <TextField fx:id="CC_text" editable="false" layoutX="789.0" layoutY="304.0" prefHeight="26.0" prefWidth="202.0" />
       <Text layoutX="737.0" layoutY="322.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CC" />
-      <TextField fx:id="MFR_text" layoutX="789.0" layoutY="264.0" prefHeight="26.0" prefWidth="202.0" />
+      <TextField fx:id="MFR_text" disable="true" editable="false" layoutX="789.0" layoutY="264.0" prefHeight="26.0" prefWidth="202.0" />
       <Text layoutX="737.0" layoutY="282.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MFR" />
-      <Button fx:id="MBR_btn1" layoutX="1008.0" layoutY="304.0" mnemonicParsing="false" onAction="#PutBinary" text="-" />
+      <Button fx:id="MBR_btn1" layoutX="1008.0" layoutY="304.0" mnemonicParsing="false" onAction="#PutBinaryCC" text="-" />
    </children>
 </AnchorPane>

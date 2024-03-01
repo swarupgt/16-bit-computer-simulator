@@ -15,6 +15,10 @@ public class Register {
         return value;
     }
 
+    public int GetBitsize() {
+        return bitsize;
+    }
+
     // Set register value if valid.
     public int Set(int v) {
         if (v < 0 || v > Math.pow(2, bitsize)) {

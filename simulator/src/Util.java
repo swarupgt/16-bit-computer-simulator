@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Util {
     public static ArrayList<String[]> ReadInput(String filename) {
@@ -29,5 +30,50 @@ public class Util {
             allInstructions.add(temp);
         }
         return allInstructions;
+    }
+
+    // Check if string is boolean and of desired bit length.
+    public static boolean IsValidBooleanValue(String s, int len) {
+        if (s.length() > len) {
+            return false;
+        }
+
+        for (char c : s.toCharArray()) {
+            if (c != '0' && c != '1') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Prefix a given number string with zeroes upto the specified n 
+    public static String FormatNumberString(String s, int n) {
+        int oldLength = s.length();
+        if (oldLength < n) {
+            for (int i = 0; i < (n-oldLength); i++) {
+                s = "0"+s;
+            }
+        }
+        return s;
+    }
+
+    // Returns whether given instruction has a valid opcode.
+    public static boolean IsValidInstruction(int inst) {
+        int opcode = inst / (int) Math.pow(2, 10);
+
+        return (opcode > 0 && opcode < 64);
+    }
+
+    public static String ConvertOctalToBinary(String oct) {
+        if (IsOctal(oct)) {
+            int dec = Integer.parseInt(oct, 8);
+            return Integer.toBinaryString(dec);
+        }
+        return "";
+    }
+
+    public static boolean IsOctal(String s) {
+        return Pattern.matches("^[0-7]+$", s);
     }
 }

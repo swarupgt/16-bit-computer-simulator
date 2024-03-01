@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "src.Main",
+            "projectName": "simulator_9027e5b3"
+        },
+        {
+            "type": "java",
+            "name": "Test",
+            "request": "launch",
+            "mainClass": "src.Test",
+            "projectName": "simulator_9027e5b3"
+        },
+        {
+            "type": "java",
             "name": "FinalMain",
             "request": "launch",
             "mainClass": "src.FinalMain",
@@ -18,6 +32,6 @@
             "request": "launch",
             "mainClass": "FinalMain",
             "projectName": "simulator_9027e5b3"
-        },
+        }
     ]
 }
