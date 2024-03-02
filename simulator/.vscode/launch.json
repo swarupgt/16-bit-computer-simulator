@@ -6,6 +6,14 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FinalMain",
+            "request": "launch",
+            "mainClass": "src.main.java.FinalMain",
+            "projectName": "simulator_9027e5b3",
+            "vmArgs": "--module-path /home/swarup/java/javafx-sdk-17.0.10/lib --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "src.Main",
@@ -22,7 +30,7 @@
             "type": "java",
             "name": "FinalMain",
             "request": "launch",
-            "mainClass": "src.FinalMain",
+            "mainClass": "src.main.java.FinalMain",
             "projectName": "simulator_9027e5b3",
             "vmArgs": "--module-path /home/swarup/java/javafx-sdk-17.0.10/lib --add-modules javafx.controls,javafx.fxml"
         },

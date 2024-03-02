@@ -1,0 +1,6 @@
+0 HLT
+1 LDR
+2 STR
+3 LDA
+4 LDX
+5 STX
