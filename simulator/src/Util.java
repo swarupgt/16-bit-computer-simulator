@@ -7,6 +7,8 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Util {
+
+    // Reads given file.
     public static ArrayList<String[]> ReadInput(String filename) {
         ArrayList<String> inputText = new ArrayList<String>();
         ArrayList<String[]> allInstructions = new ArrayList<String[]>();
@@ -61,10 +63,11 @@ public class Util {
     // Returns whether given instruction has a valid opcode.
     public static boolean IsValidInstruction(int inst) {
         int opcode = inst / (int) Math.pow(2, 10);
-
-        return (opcode > 0 && opcode < 64);
+        System.out.println("instruction valid for pc: " + opcode);
+        return (opcode > 0 && opcode < 64 && (inst % (int) Math.pow(2, 5) != 0));
     }
 
+    // Convert Octal to Binary
     public static String ConvertOctalToBinary(String oct) {
         if (IsOctal(oct)) {
             int dec = Integer.parseInt(oct, 8);

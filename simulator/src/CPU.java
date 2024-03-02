@@ -8,6 +8,7 @@ public class CPU {
 
     private static HashMap<Integer, String> OpCodeMap = new HashMap<Integer, String>();
 
+    // All registers
     private Register PC = new Register(12);
     private Register CC = new Register(4);
     private InstructionRegister IR = new InstructionRegister();
@@ -16,13 +17,17 @@ public class CPU {
     private Register[] GPR = new Register[4];
     private Register[] IXR = new Register[3];
 
+    // Halt indicator
     private int halt = 0;
 
+    // Memory
     private Memory Mem;
 
-    public CPU() {
-        // Set the OpCode Map
+    private ArrayList<String> ConsoleText = new ArrayList<String>();
 
+    public CPU() {
+
+        // Set the OpCode Map
         ArrayList<String[]> OpCodes = Util.ReadInput("src/opcodes.txt");
         for (String[] str : OpCodes) {
             int opnum = Integer.parseInt(str[0]);
@@ -55,9 +60,11 @@ public class CPU {
         MBR.Set(0);
         Mem = new Memory();
 
+        ConsoleText = new ArrayList<String>();
+
         // Set first non-protected location and halt to view fault
-        Mem.WriteToAddress(1, 6);
-        Mem.WriteToAddress(6, 0b0000000000000000);
+        // Mem.WriteToAddress(1, 6);
+        // Mem.WriteToAddress(6, 0b0000000000000000);
         halt = 0;
     }
 
@@ -68,21 +75,22 @@ public class CPU {
             InputStreamReader reader = new InputStreamReader(new FileInputStream(f));
             BufferedReader br = new BufferedReader(reader);
             String l = "";
+            boolean initPC = false;
             while (l != null) {
                 l = br.readLine();
                 if (l == null) break;
                 String[] insts = l.split(" ");
                 
                 // can use later for fault handling
-                // we add 7 to reserve the first 6 for faults
-                int PCMemValue = Integer.parseInt(insts[0], 8) + 7;
+                // add 7 to reserve the first 6 for faults for part 3 of the project
+                int PCMemValue = Integer.parseInt(insts[0], 8);
                 int inst = Integer.parseInt(insts[1], 8);
                 int faultIndex = Mem.WriteToAddress(PCMemValue, inst);
                 if (faultIndex == -1) {
                     System.out.println("Incorrect address provided");
                 }
-                boolean initPC = false;
                 if (!initPC && Util.IsValidInstruction(inst)) {
+                    System.out.println("PC being set to: " + PCMemValue);
                     PC.Set(PCMemValue);
                     initPC = true;
                 }
@@ -106,25 +114,38 @@ public class CPU {
         // Set MAR based on PC
         MAR.Set(PC.Get());
         IncrementPC();
-        int faultIndex = Mem.ReadFromAddress(MAR.Get()+7);
+        System.out.println("MAR value: " + MAR.Get());
+        int faultIndex = Mem.ReadFromAddress(MAR.Get());
         if (faultIndex == -1) {
             System.out.println("Incorrect address provided");
         }
         
         // Get instruction from memory pointed to by MAR and store in MBR
-        MBR.Set(Mem.ReadFromAddress(MAR.Get()+7));
+        MBR.Set(Mem.ReadFromAddress(MAR.Get()));
+        System.out.println("MBR value: " + MBR.Get());
 
         // Set IR as the instruction stored in MBR
         IR.Set(MBR.Get());
+        System.out.println("IR values: " + IR.GetOpCode() + " " + IR.GetLSIndexRegister());
         ExecuteInstruction();
 
         return true;
 
     }
 
+    // execute instruction based on opcode
     private void ExecuteInstruction() {
+        System.out.println("Opcode in IR: " + IR.GetOpCode());
         switch (OpCodeMap.get(IR.GetOpCode())) {
+            case "HLT":
+                if (IR.GetAddress() == 0) {
+                    halt = 1;
+                    break;
+                }
             case "LDR":
+                if (IR.GetAddress() == 0 && IR.GetLSRegister() == 0 && IR.GetLSIndexRegister() == 0) {
+                    return;
+                }
                 LDR();
                 break;
             case "STR":
@@ -142,6 +163,7 @@ public class CPU {
             default:
                 // Unknown Opcode
                 halt = 1;
+                PrintToConsole("Unknown opcode detected");
         }
     }
 
@@ -149,58 +171,82 @@ public class CPU {
         int EA = ComputeEffectiveAddress();
         MAR.Set(EA);
 
-        int res = Mem.ReadFromAddress(MAR.Get()+7);
+        int res = Mem.ReadFromAddress(MAR.Get());
         if (res < 0) {
-            System.out.println("Memory fault occured, code " + res);
+            PrintToConsole("Memory fault occured, code " + res);
         }
         // Set MBR as value fetched using address in MAR
         MBR.Set(res);
         // Set GPR register as value present in MBR
         GPR[IR.GetLSRegister()].Set(MBR.Get());
 
-        System.out.println("LDR successful, data " + res + "read from loc " + MAR.Get());
+        PrintToConsole("LDR successful, data " + res + " read from loc " + MAR.Get() + " to GPR " + IR.GetLSRegister());
     }
 
     public void STR() {
         int EA = ComputeEffectiveAddress();
-        MAR.Set(EA);
-
-        int res = Mem.ReadFromAddress(MAR.Get()+7);
-        if (res < 0) {
-            System.out.println("Memory fault occured, code " + res);
-        }
 
         // Set MAR to Ea computed
         MAR.Set(EA);
         // Set MBR as specified register's value to be written
         MBR.Set(GPR[IR.GetLSRegister()].Get());
         // Write MBR data into memory 
-        Mem.WriteToAddress(MAR.Get()+7, MBR.Get());
+        Mem.WriteToAddress(MAR.Get(), MBR.Get());
 
-        System.out.println("STR successful, data " + Mem.ReadFromAddress(MAR.Get()) + "written to loc " + MAR.Get());
+        PrintToConsole("STR successful, data " + Mem.ReadFromAddress(MAR.Get()) + " written to loc " + MAR.Get());
     }
 
     public void LDA() {
+        int EA = ComputeEffectiveAddress();
+        
+        // Set GPR register as EA
+        GPR[IR.GetLSRegister()].Set(EA);
 
+        PrintToConsole("LDA successful, address " + EA + " loaded to GPR " + IR.GetLSRegister());
     }
 
     public void LDX() {
+        int EA = ComputeEffectiveAddress();
+        MAR.Set(EA);
 
+        int res = Mem.ReadFromAddress(MAR.Get());
+        if (res < 0) {
+            PrintToConsole("Memory fault occured, code " + res);
+        }
+        // Set MBR as value fetched using address in MAR
+        MBR.Set(res);
+        // Set GPR register as value present in MBR
+        IXR[IR.GetLSIndexRegister()-1].Set(MBR.Get());
+
+        PrintToConsole("LDX successful, data " + res + " read from loc " + MAR.Get() + " to IXR " + IR.GetLSIndexRegister());
+        // System.out.println("LDX successful, data " + res + "read from loc " + MAR.Get() + "to IXR " + IR.GetLSIndexRegister());
     }
 
     public void STX() {
+        int EA = ComputeEffectiveAddress();
 
+        // Set MAR to EA computed
+        MAR.Set(EA);
+        // Set MBR as specified index register's value to be written
+        MBR.Set(IXR[IR.GetLSIndexRegister()-1].Get());
+        // Write MBR data into memory 
+        Mem.WriteToAddress(MAR.Get(), MBR.Get());
+
+        PrintToConsole("STX successful, data " + Mem.ReadFromAddress(MAR.Get()) + " written to loc " + MAR.Get());
     }
 
     // Load 
     public void Load() {
-        MBR.Set(Mem.ReadFromAddress(MAR.Get()+7));
+        MBR.Set(Mem.ReadFromAddress(MAR.Get()));
+        PrintToConsole("Load successful, data " + MBR.Get() + " read from loc " + MAR.Get());
     }
 
     public void Store() {
         int address = MAR.Get();
         int value = MBR.Get();
-        Mem.WriteToAddress(address+7, value);
+        Mem.WriteToAddress(address, value);
+
+        PrintToConsole("Store successful, data " + value + " written to loc " + address);
     }
 
     public void IncrementPC() {
@@ -272,13 +318,8 @@ public class CPU {
 
     public void SetGPR(String s, int num) {
 
-        System.out.println("inside SetGPR, s and num = " + s + num);
-        System.out.println("GPR num val: " + GPR[num].Get());
-
         if (Util.IsValidBooleanValue(s, GPR[num].GetBitsize())) {
-            System.out.println("it is a valid number");
             GPR[num].Set(Integer.parseInt(s,2));
-            System.out.println("New GPR num val: " + GPR[num].Get());
         }
     }
 
@@ -310,6 +351,15 @@ public class CPU {
         if (Util.IsValidBooleanValue(s, CC.GetBitsize())) {
             CC.Set(Integer.parseInt(s,2));
         }
+    }
+
+    public void PrintToConsole(String s) {
+        System.out.println(s);
+        ConsoleText.add(s);
+    }
+
+    public ArrayList<String> GetConsoleText() {
+        return ConsoleText;
     }
 
 }

@@ -3,9 +3,11 @@ package src;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import java.io.*;
+import java.util.ArrayList;
 
 
 public class Controller {
@@ -13,6 +15,9 @@ public class Controller {
     private CPU cpu = new CPU();
 
     private Stage mainWindow;
+
+    @FXML
+    private TextArea ConsoleOutput_text;
 
     @FXML
     private TextField GPR0_text;
@@ -133,6 +138,7 @@ public class Controller {
         IR_text.setText(cpu.GetIR());
         CC_text.setText(cpu.GetCC());
 
+        UpdateConsoleOutput();
     }
 
     @FXML
@@ -146,6 +152,7 @@ public class Controller {
         }
         else {
             InputFile_text.setStyle("-fx-control-inner-background: white;");
+            cpu.Initialise();
             cpu.LoadFromROM(filepath);
             UpdateAllGUIValues();
         }
@@ -160,25 +167,39 @@ public class Controller {
     @FXML
     void OnLoadButtonClick(ActionEvent event) {
         cpu.Load();
+        UpdateAllGUIValues();
     }
 
     @FXML
     void OnRunButtonClick(ActionEvent event) {
 
-        // change later
-        cpu.RunOneStep();
+        while (!cpu.HasHalted()) {
+            cpu.RunOneStep();
+            UpdateAllGUIValues();
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException e) {
+                Thread.currentThread().interrupt();                
+            }
+        }
+
+        cpu.PrintToConsole("Halt occurred");
         UpdateAllGUIValues();
+        
     }
 
     @FXML
     void OnStepButtonClick(ActionEvent event) {
-        cpu.RunOneStep();
+        if (!cpu.RunOneStep()) {
+            cpu.PrintToConsole("Halt occurred");
+        }
         UpdateAllGUIValues();
     }
 
     @FXML
     void OnStoreButtonClick(ActionEvent event) {
-
+        cpu.Store();
+        UpdateAllGUIValues();
     }
 
     @FXML
@@ -271,10 +292,21 @@ public class Controller {
             Octal_text.setStyle("-fx-control-inner-background: white;");
         }
         else {
+            cpu.PrintToConsole("Incorrect base for input");
             Octal_text.setStyle("-fx-control-inner-background: #FFB6C1;");
         }
 
         return bin;
+    }
+
+    private void UpdateConsoleOutput() {
+        ArrayList<String> cl = cpu.GetConsoleText();
+        String res = "";
+        for (int i = cl.size()-1; i >= 0; i--) {
+            res = res + cl.get(i) + "\n";
+        }
+
+        ConsoleOutput_text.setText(res);
     }
 
 }

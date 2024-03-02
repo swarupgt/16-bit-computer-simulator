@@ -14,7 +14,7 @@ public class Main extends Application {
         Controller controller = loader.getController();
         controller.setMainWindow(primaryStage);
         primaryStage.setTitle("Team 5 Simulator");
-        primaryStage.setScene(new Scene(root, 1000, 1000));
+        primaryStage.setScene(new Scene(root, 1223, 846));
         primaryStage.show();
     }
 
