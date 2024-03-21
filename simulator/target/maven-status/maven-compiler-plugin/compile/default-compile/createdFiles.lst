@@ -2,7 +2,6 @@ src/main/java/InstructionRegister.class
 src/main/java/Memory.class
 src/main/java/CPU.class
 src/main/java/Register.class
-src/main/java/Test.class
 src/main/java/Main.class
 src/main/java/Util.class
 src/main/java/FinalMain.class

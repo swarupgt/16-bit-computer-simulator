@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.util.ArrayList;
 
-
+// Class that controls the GUI
 public class Controller {
 
     private CPU cpu = new CPU();
