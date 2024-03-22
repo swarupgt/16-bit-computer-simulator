@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import src.main.java.Devices;
+
 public class CPU {
 
     private static HashMap<Integer, String> OpCodeMap = new HashMap<Integer, String>();
@@ -17,6 +19,9 @@ public class CPU {
     private Register[] GPR = new Register[4];
     private Register[] IXR = new Register[3];
 
+    // I/O devices
+    private Devices Dev = new Devices();
+
     // Halt indicator
     private int halt = 0;
 
@@ -24,6 +29,8 @@ public class CPU {
     private Memory Mem;
 
     private ArrayList<String> ConsoleText = new ArrayList<String>();
+
+    private boolean normalPC = true;
 
     public CPU() {
 
@@ -113,7 +120,12 @@ public class CPU {
 
         // Set MAR based on PC
         MAR.Set(PC.Get());
-        IncrementPC();
+        if (normalPC) {
+            IncrementPC();
+        } else {
+            normalPC = true;
+        }
+
         System.out.println("MAR value: " + MAR.Get());
         int faultIndex = Mem.ReadFromAddress(MAR.Get());
         if (faultIndex == -1) {
@@ -237,6 +249,292 @@ public class CPU {
         Mem.WriteToAddress(MAR.Get(), MBR.Get());
 
         PrintToConsole("STX successful, data " + Mem.ReadFromAddress(MAR.Get()) + " written to loc " + MAR.Get());
+    }
+
+    public void SETCCE() {
+        if (GPR[IR.GetLSRegister()].Get() == 0) {
+            CC.Set(Util.setOrClearIthBit(CC.Get(), 3, true));
+            PrintToConsole("CC's E bit set to 1");
+        } else {
+            CC.Set(Util.setOrClearIthBit(CC.Get(), 3, false));
+            PrintToConsole("CC's E bit set to 0");
+        }
+    }
+
+    public void JZ() {
+        int EA = ComputeEffectiveAddress();
+        if (Util.getIthBit(CC.Get(), 3) == 1) {
+            PC.Set(EA);
+            normalPC = false;
+            PrintToConsole("JZ successful, PC = " + EA);
+        }
+    }
+
+    public void JNZ() {
+        int EA = ComputeEffectiveAddress();
+        if (Util.getIthBit(CC.Get(), 3) == 0) {
+            PC.Set(EA);
+            normalPC = false;
+            PrintToConsole("JNZ successful, PC = " + EA);
+        }
+    }
+
+    public void JCC() {
+        int EA = ComputeEffectiveAddress();
+        int conditionCodeIndex = IR.GetLSRegister();
+        if (Util.getIthBit(CC.Get(), conditionCodeIndex) == 1) {
+            PC.Set(EA);
+            normalPC = false;
+            PrintToConsole("JCC successful, PC = " + EA);
+        }
+    }
+
+    public void JMA() {
+        int EA = ComputeEffectiveAddress();
+        PC.Set(EA);
+        normalPC = false;
+        PrintToConsole("JMA successful, PC = " + EA);
+    }
+
+    public void JSR() {
+        int EA =ComputeEffectiveAddress();
+        GPR[3].Set(PC.Get()+1);
+        PC.Set(EA);
+        PrintToConsole("JSR successful, PC = " + EA);
+    }
+
+    public void RFS() {
+        GPR[0].Set(IR.GetImmed());
+        PC.Set(GPR[3].Get());
+        normalPC = false;
+
+        PrintToConsole("RFS successful, PC = " + PC.Get());
+    }
+
+    public void SOB() {
+        GPR[IR.GetLSRegister()].Set(GPR[IR.GetLSRegister()].Get()-1);
+        int EA = ComputeEffectiveAddress();
+        if (GPR[IR.GetLSRegister()].Get() > 0) {
+            PC.Set(EA);
+            normalPC = false;
+            PrintToConsole("SOB successful, PC = " + EA);
+        }
+    }
+
+    public void JGE() {
+        int EA = ComputeEffectiveAddress();
+        if (GPR[IR.GetLSRegister()].Get() >= 0) {
+            PC.Set(EA);
+            normalPC = false;
+            PrintToConsole("JGE successful, PC = " + EA);
+        }
+    }
+
+    public void AMR() {
+        int cr = GPR[IR.GetLSRegister()].Get();
+        int EA = ComputeEffectiveAddress();
+        int val = Mem.ReadFromAddress(EA);
+        GPR[IR.GetLSRegister()].Set(cr+val);
+
+        PrintToConsole("AMR successful, R"+IR.GetLSRegister()+" value = " + cr+val);
+    }
+
+    public void SMR() {
+        int cr = GPR[IR.GetLSRegister()].Get();
+        int EA = ComputeEffectiveAddress();
+        int val = Mem.ReadFromAddress(EA);
+        GPR[IR.GetLSRegister()].Set(cr-val);
+
+        PrintToConsole("SMR successful, R"+IR.GetLSRegister()+" value = " + cr+val);
+    }
+
+    public void AIR() {
+        int cr = GPR[IR.GetLSRegister()].Get();
+        int val = IR.GetImmed();
+        GPR[IR.GetLSRegister()].Set(cr+val);
+
+        PrintToConsole("AIR successful, R"+IR.GetLSRegister()+" value = " + cr+val);
+    }
+
+    public void SIR() {
+        int cr = GPR[IR.GetLSRegister()].Get();
+        int val = IR.GetImmed();
+        GPR[IR.GetLSRegister()].Set(cr-val);
+
+        PrintToConsole("SIR successful, R"+IR.GetLSRegister()+" value = " + cr+val);
+    }
+
+    public void MLT() {
+        int crx = GPR[IR.GetRegisterX()].Get();
+        int cry = GPR[IR.GetRegisterY()].Get();
+
+        if ((IR.GetRegisterX() % 2 != 0) || (IR.GetRegisterY() % 2 != 0)) {
+            //trap as rx and ry need to be 0 or 2
+        }
+
+        int a[] = Util.multiplyRegisters(crx, cry, GPR[0].bitsize);
+        int of = GPR[IR.GetRegisterX()].Set(a[0]);
+        GPR[IR.GetRegisterX()+1].Set(a[1]);
+
+        // overflow
+        if (of == -1) {
+            CC.Set(Util.setOrClearIthBit(CC.Get(), 0, true));
+            // PrintToConsole("MLT Overflow");
+        }
+
+        PrintToConsole("MLT Successful");
+    }
+
+    public void DVD() {
+        int crx = GPR[IR.GetRegisterX()].Get();
+        int cry = GPR[IR.GetRegisterY()].Get();
+
+        if ((IR.GetRegisterX() % 2 != 0) || (IR.GetRegisterY() % 2 != 0)) {
+            //trap as rx needs to be 0 or 2
+        }
+
+        // div by zero
+        if (cry == 0) {
+            CC.Set(Util.setOrClearIthBit(CC.Get(), 2, true));
+        }
+
+        int a[] = Util.divideRegisters(crx, cry);
+        int of = GPR[IR.GetRegisterX()].Set(a[0]);
+        GPR[IR.GetRegisterX()+1].Set(a[1]);
+
+        PrintToConsole("DVD Successful");
+    }
+
+    public void TRR() {
+        int crx = GPR[IR.GetRegisterX()].Get();
+        int cry = GPR[IR.GetRegisterY()].Get();
+
+        CC.Set(Util.setOrClearIthBit(CC.Get(), 3, crx == cry));
+
+        PrintToConsole("TRR Successful, equality = "+ (crx == cry));
+    }
+
+    public void AND() {
+        int crx = GPR[IR.GetRegisterX()].Get();
+        int cry = GPR[IR.GetRegisterY()].Get();
+
+        GPR[IR.GetRegisterX()].Set(crx & cry);
+        PrintToConsole("AND Successful, res = "+ GPR[IR.GetRegisterX()].Get());
+    }
+
+    public void ORR() {
+        int crx = GPR[IR.GetRegisterX()].Get();
+        int cry = GPR[IR.GetRegisterY()].Get();
+
+        GPR[IR.GetRegisterX()].Set(crx | cry);
+        PrintToConsole("ORR Successful, res = "+ GPR[IR.GetRegisterX()].Get());
+    }
+    
+    public void NOT() {
+        int crx = GPR[IR.GetRegisterX()].Get();
+
+        GPR[IR.GetRegisterX()].Set(~crx);
+        PrintToConsole("ORR Successful, res = "+ GPR[IR.GetRegisterX()].Get());
+    }
+
+    public void SRC() {
+        int cr = GPR[IR.GetRegisterX()].Get();
+        int AL = IR.GetShiftAL(), LR = IR.GetShiftLR();
+        int count = IR.GetShiftCount(), bitsize = GPR[0].GetBitsize();
+
+        boolean isNegative = cr < 0;
+        int finalCr = cr % (int) Math.pow(2, bitsize-1);
+        int res;
+
+        // shift right
+        if (LR == 0) {
+            // arithmetically
+            if (AL == 0) {
+                res = (finalCr >> count) % (int) Math.pow(2, bitsize-1);
+                if (res > 0 && isNegative) {
+                    res = -res;
+                }
+            } else {
+                res = (finalCr >>> count) % (int) Math.pow(2, bitsize-1);
+                if (res > 0 && isNegative) {
+                    res = -res;
+                }
+            }
+
+            // set underflow
+            if (finalCr > 0 && res < 0) {
+                CC.Set(Util.setOrClearIthBit(CC.Get(), 1, true));
+            }
+
+        // shift left
+        } else {
+            res = (finalCr << count) % (int) Math.pow(2, bitsize-1);
+            if (res > 0 && isNegative) {
+                res = -res;
+            }
+        }
+
+        PrintToConsole("SRC Successful, c(r) = " + res);
+    }
+
+    public void RRC() {
+        int cr = GPR[IR.GetRegisterX()].Get();
+        int AL = IR.GetShiftAL(), LR = IR.GetShiftLR();
+        int count = IR.GetShiftCount(), bitsize = GPR[0].GetBitsize();
+
+        boolean isNegative = cr < 0;
+        int finalCr = cr % (int) Math.pow(2, bitsize-1);
+        short res;
+
+        // shift right
+        if (LR == 0) {
+            // arithmetically
+            if (AL == 0) {
+                res = (short) ((finalCr >> count) | (finalCr << (int) Math.pow(2, bitsize-1)));
+                if (res > 0 && isNegative) {
+                    res = (short) -res;
+                }
+            } else {
+                res = (short) ((finalCr >>> count) | (finalCr << (int) Math.pow(2, bitsize-1)));
+                if (res > 0 && isNegative) {
+                    res = (short) -res;
+                }
+            }
+
+        // shift left
+        } else {
+            res = (short) ((finalCr << count) | (finalCr >> (int) Math.pow(2, bitsize-1)));
+            if (res > 0 && isNegative) {
+                res = (short) -res;
+            }
+        }
+
+        PrintToConsole("RRC Successful, c(r) = " + res);
+    }
+
+    public void IN() {
+        int devID = IR.GetDevID();
+        int rIdx = IR.GetLSRegister();
+        if (devID == 0) {
+            int val = Dev.PopKeyboardBuffer();
+            GPR[rIdx].Set(val);
+            PrintToConsole("IN Successful from Keyboard");
+
+        } else if (devID == 2) {
+            int val = Dev.PopCardBuffer();
+            GPR[rIdx].Set(val);
+            PrintToConsole("IN Successful from Card");
+        } 
+    }
+
+    public void OUT() {
+        int devID = IR.GetDevID();
+        int rIdx = IR.GetLSRegister();
+        if (devID == 1) {
+            int val = GPR[rIdx].Get();
+            Dev.PushToPrinterBuffer(val);
+            PrintToConsole("OUT Successful to Printer");
+        }
     }
 
     // Load 

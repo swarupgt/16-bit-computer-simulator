@@ -79,4 +79,42 @@ public class Util {
     public static boolean IsOctal(String s) {
         return Pattern.matches("^[0-7]+$", s);
     }
+
+    public static int setOrClearIthBit(int num, int i, boolean set) {
+        // Create a mask with the ith bit set to 1 using left shift.
+        int mask = 1 << i;
+
+        // Use bitwise operations based on the set boolean:
+        if (set) {
+            // Set the ith bit using bitwise OR.
+            return num | mask;
+        } else {
+            // Clear the ith bit using bitwise AND with inverted mask.
+            int invertedMask = ~mask;
+            return num & invertedMask;
+        }
+    }
+
+    public static int getIthBit(int num, int i) {
+        int mask = 1 << i;
+        return num & mask;
+    }
+
+    public static int[] multiplyRegisters(int crx, int cry, int bitLength) {
+        int a[] = new int[2];
+        int res = crx * cry;
+
+        a[0] = (int) (res >> bitLength);
+        a[1] = (int) (res & 0xFFFF);
+
+        return a;
+    }
+
+    public static int[] divideRegisters(int crx, int cry) {
+        int a[] = new int[2];
+        a[0] = (int) (crx / cry);
+        a[1] = (int) (crx % cry);
+
+        return a;
+    }
 }

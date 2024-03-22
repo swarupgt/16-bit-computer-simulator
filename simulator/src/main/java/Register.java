@@ -21,8 +21,10 @@ public class Register {
 
     // Set register value if valid.
     public int Set(int v) {
-        if (v < 0 || v > Math.pow(2, bitsize)) {
-           return -1;
+        if (v > Math.pow(2, bitsize)) {
+            int mask = (1 << bitsize) - 1;
+            value = v & mask;
+            return -1;
         }
         value = v;
         return 0;
