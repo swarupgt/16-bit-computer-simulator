@@ -118,6 +118,15 @@ public class Controller {
     @FXML
     private Button MBR_btn1;
 
+    @FXML
+    private TextField Keyboard_text;
+
+    @FXML
+    private TextArea ConsolePrinter_text;
+
+    @FXML
+    private TextArea Cache_text;
+
     public void setMainWindow(Stage mainWindow) {
         this.mainWindow = mainWindow;
         this.mainWindow.setTitle("Team 5 Simulator");
@@ -138,6 +147,11 @@ public class Controller {
         MBR_text.setText(cpu.GetMBR());
         IR_text.setText(cpu.GetIR());
         CC_text.setText(cpu.GetCC());
+
+        ConsolePrinter_text.setText(cpu.GetPrinter());
+        Cache_text.setText(cpu.GetActiveCacheText());
+
+
 
         UpdateConsoleOutput();
     }
@@ -287,6 +301,13 @@ public class Controller {
     @FXML
     void SetBinaryTextValue(ActionEvent event) {
         SetBinaryTextFromOctalInput();
+        UpdateAllGUIValues();
+    }
+
+    @FXML
+    void OnKeyboardEnter(ActionEvent event) {
+        String kbf = Keyboard_text.getText();
+        cpu.SetKeyboardBuffer(kbf);
         UpdateAllGUIValues();
     }
 

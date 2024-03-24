@@ -224,9 +224,9 @@ public class Assembler {
             String instOctalString = FormatNumberString(Integer.toOctalString(Integer.parseInt(column2, 2)), 6);
 
             // write to loading and listing files
-            AddToLoadingFileContent(PCOctalString+ "\t"+instOctalString);
-            AddToListingFileContent(PCOctalString+ "\t"+instOctalString, inst);
-            System.out.println(PCOctalString+ "\t"+instOctalString);
+            AddToLoadingFileContent(PCOctalString+ " "+instOctalString);
+            AddToListingFileContent(PCOctalString+ " "+instOctalString, inst);
+            System.out.println(PCOctalString+ " "+instOctalString);
 
             // update PC
             ProgramCounter++;

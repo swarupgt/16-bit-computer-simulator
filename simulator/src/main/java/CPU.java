@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import src.main.java.Devices;
-
 public class CPU {
 
     private static HashMap<Integer, String> OpCodeMap = new HashMap<Integer, String>();
@@ -109,6 +107,8 @@ public class CPU {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Mem.CB.Init();
     }
 
 
@@ -126,19 +126,19 @@ public class CPU {
             normalPC = true;
         }
 
-        System.out.println("MAR value: " + MAR.Get());
-        int faultIndex = Mem.ReadFromAddress(MAR.Get());
-        if (faultIndex == -1) {
+        int val = Mem.ReadFromAddress(MAR.Get());
+        if (val == -1) {
             System.out.println("Incorrect address provided");
         }
         
         // Get instruction from memory pointed to by MAR and store in MBR
-        MBR.Set(Mem.ReadFromAddress(MAR.Get()));
-        System.out.println("MBR value: " + MBR.Get());
+        MBR.Set(val);
+
+        System.out.println("MAR, MBR: " + MAR.Get() + ", " + MBR.Get());
 
         // Set IR as the instruction stored in MBR
         IR.Set(MBR.Get());
-        System.out.println("IR values: " + IR.GetOpCode() + " " + IR.GetLSIndexRegister());
+        System.out.println("IR values: " + IR.GetOpCode() + " " + IR.GetLSRegister() + " " + IR.GetLSIndexRegister() + " " + IR.GetLSIndirectBit() + " " + IR.GetAddress());
         ExecuteInstruction();
 
         if (halt == 1) {
@@ -156,8 +156,8 @@ public class CPU {
             case "HLT":
                 if (IR.GetAddress() == 0) {
                     halt = 1;
-                    break;
                 }
+                break;
             case "LDR":
                 if (IR.GetAddress() == 0 && IR.GetLSRegister() == 0 && IR.GetLSIndexRegister() == 0) {
                     return;
@@ -176,6 +176,75 @@ public class CPU {
             case "STX":
                 STX();
                 break;
+            case "SETCCE":
+                SETCCE();
+                break;
+            case "JZ":
+                JZ();
+                break;
+            case "JNE":
+                JNE();
+                break;
+            case "JCC":
+                JCC();
+                break;
+            case "JMA":
+                JMA();
+                break;
+            case "JSR":
+                JSR();
+                break;
+            case "RFS":
+                RFS();
+                break;
+            case "SOB":
+                SOB();
+                break;
+            case "JGE":
+                JGE();
+                break;
+            case "AMR":
+                AMR();
+                break;
+            case "SMR":
+                SMR();
+                break;
+            case "AIR":
+                AIR();
+                break;
+            case "SIR":
+                SIR();
+                break;
+            case "MLT":
+                MLT();
+                break;
+            case "DVD":
+                DVD();
+                break;
+            case "TRR":
+                TRR();
+                break;
+            case "AND":
+                AND();
+                break;
+            case "ORR":
+                ORR();
+                break;
+            case "NOT":
+                NOT();
+                break;
+            case "SRC":
+                SRC();
+                break;
+            case "RRC":
+                RRC();
+                break;
+            case "IN":
+                IN();
+                break;
+            case "OUT":
+                OUT();
+                break;
             default:
                 // Unknown Opcode
                 halt = 1;
@@ -184,10 +253,16 @@ public class CPU {
     }
 
     public void LDR() {
+        System.out.println("inside LDR()");
         int EA = ComputeEffectiveAddress();
         MAR.Set(EA);
 
+        System.out.println("EA: " + EA);
+
         int res = Mem.ReadFromAddress(MAR.Get());
+
+        System.out.println("RES: " + res);
+
         if (res < 0) {
             PrintToConsole("Memory fault occured, code " + res);
         }
@@ -222,6 +297,7 @@ public class CPU {
     }
 
     public void LDX() {
+        System.out.println("inside LDX()");
         int EA = ComputeEffectiveAddress();
         MAR.Set(EA);
 
@@ -270,12 +346,12 @@ public class CPU {
         }
     }
 
-    public void JNZ() {
+    public void JNE() {
         int EA = ComputeEffectiveAddress();
         if (Util.getIthBit(CC.Get(), 3) == 0) {
             PC.Set(EA);
             normalPC = false;
-            PrintToConsole("JNZ successful, PC = " + EA);
+            PrintToConsole("JNE successful, PC = " + EA);
         }
     }
 
@@ -610,6 +686,39 @@ public class CPU {
 
     public String GetCC() {
         return Util.FormatNumberString(Integer.toBinaryString(CC.Get()), CC.GetBitsize());
+    }
+
+    public String GetPrinter() {
+        return Dev.GetPrinterBuffer();
+    }
+
+    public String GetKeyboardBuffer() {
+        return Dev.GetKeyboardBuffer();
+    }
+
+    public String GetActiveCacheText() {
+        String s = "";
+
+        int[][] ac = Mem.CB.GetActiveCacheBlock();
+        int fifoLength = Mem.CB.GetFifoLength();
+
+        for (int i = 0; i < fifoLength; i++) {
+            for (int j = 1; j < 10; j++) {
+                if (j == 1) {
+                    s += "Tag:" + Integer.toString(ac[i][j]) + " - ";
+                } else {
+                    s += Integer.toString(ac[i][j]) + " ";
+                }
+                
+            }
+            s += "\n";
+        }
+
+        return s;
+    }
+
+    public void SetKeyboardBuffer(String s) {
+        Dev.SetKeyboardBuffer(s);
     }
 
     public void SetPC(String s) {

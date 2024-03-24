@@ -2,7 +2,9 @@
 /home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/Memory.java
 /home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/Register.java
 /home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/Controller.java
+/home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/Cache.java
 /home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/FinalMain.java
+/home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/Devices.java
 /home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/Main.java
 /home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/InstructionRegister.java
 /home/swarup/workspace/spring24/CSA/project/16-bit-computer-simulator/simulator/src/main/java/CPU.java

@@ -23,6 +23,8 @@ public class Devices {
             KeyboardBuffer = KeyboardBuffer.substring(1);
             return (int) val;
         }
+
+        return -1;
     }
 
     public int PopCardBuffer() {
@@ -31,11 +33,25 @@ public class Devices {
             CardBuffer = CardBuffer.substring(1);
             return (int) val;
         }
+
+        return -1;
     }
 
     public void PushToPrinterBuffer(int val) {
         char c = (char) val;
         PrinterBuffer = PrinterBuffer + c;
+    }
+
+    public String GetPrinterBuffer() {
+        return PrinterBuffer;
+    }
+
+    public String GetKeyboardBuffer() {
+        return KeyboardBuffer;
+    }
+
+    public void SetKeyboardBuffer(String s) {
+        KeyboardBuffer = s;
     }
 
 }
