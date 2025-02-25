@@ -4,10 +4,12 @@ This project was written as a term project for CSCI 6461 Computer Architecture, 
 
 As of April 2024, it runs all the instructions(`load`, `store`, `jump` and such) , has functioning I/O and caching.
 
+The heart of the project can be found in `simulator/src/main/java`.
+
 ### How to run
-1.  The simulator can be easily run using the `java` command. For example on Linux - 
+1.  The simulator (`simulator/target/simulator-1.0.0-jar-with-dependencies.jar`) can be easily run using the `java` command. For example on Linux - 
 ```
-    $ java -jar SimulatorTeam5.jar
+    $ java -jar file.jar
 ```
 2. Press the `INIT` button to initialise the CPU.
 
